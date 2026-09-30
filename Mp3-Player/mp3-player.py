@@ -9,6 +9,10 @@ pygame.init()
 # Initialize the music mixer
 pygame.mixer.init()
 
+# Create a window
+screen = pygame.display.set_mode((500, 300), pygame.RESIZABLE)
+pygame.display.set_caption("Mp3 Player")
+
 while True:
     pygame.mixer.music.load("../Mp3s/" + playlist[songnumber] + ".ogg")
     pygame.mixer.music.play()
@@ -22,7 +26,9 @@ while True:
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.mixer.music.stop()
+                pygame.quit()
+                sys.exit()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
@@ -37,7 +43,9 @@ while True:
                     pygame.mixer.music.stop()
 
                 elif event.key == pygame.K_q:
-                    running = False
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    sys.exit()
 
     # Keep the program alive until the music finishes
         if not pygame.mixer.music.get_busy() and not paused:
