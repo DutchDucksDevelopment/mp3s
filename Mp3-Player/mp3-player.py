@@ -64,6 +64,15 @@ while True:
                     pygame.quit()
                     sys.exit()
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    volume += 5
+                elif event.button == 5:
+                    volume -= 5
+
+                volume = max(0, min(100, volume))
+                player.audio_set_volume(volume)
+
 player.stop
 pygame.quit()
 sys.exit()
