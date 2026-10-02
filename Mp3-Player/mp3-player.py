@@ -12,9 +12,9 @@ MOUSE_DEVICE = (
 mouse = InputDevice(MOUSE_DEVICE)
 songnumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
 random.shuffle(songnumbers)
-playlist = ["Arctic Monkeys - 505", "LINKIN PARK - Crawling", "LINKIN PARK - Faint", "LINKIN PARK - Given Up", "LINKIN PARK - In The End", "LINKIN PARK - Numb", "LINKIN PARK - One Step Closer", "LINKIN PARK - The Emptiness Machine", "LINKIN PARK - What I've Done", "Nirvana - All Apologies", "Nirvana - Come As You Are", "Nirvana - Heart-Shaped Box", "Nirvana - Lithium", "Nirvana - Rape Me", "Nirvana - Smells Like Teen Spirit", "overtonight - elephant cage", "overtonight - ghost party", "overtonight - mirrors demo", "overtonight - poem", "overtonight - they'll post it online", "Penelope Scott - Rat", "Radiohead - Creep", "Radiohead - Exit Music (for a film)", "Radiohead - Let Down", "Radiohead - No Surprises", "s0rrow - fake ur face", "s0rrow - stalk ur socials", "s0rrow - unhappy", "The Killers - Mr. Brightside", "The Long Faces - Jane!", "TV Girl - it almost worked", "TV Girl - Lovers Rock", "TV Girl - Not Allowed"]
+playlist = ["Arctic Monkeys - 505", "LINKIN PARK - Crawling", "LINKIN PARK - Somewhere I Belong", "LINKIN PARK - Faint", "LINKIN PARK - Given Up", "LINKIN PARK - In The End", "LINKIN PARK - Numb", "LINKIN PARK - One Step Closer", "LINKIN PARK - The Emptiness Machine", "LINKIN PARK - What I've Done", "Nirvana - All Apologies", "Nirvana - Come As You Are", "Nirvana - Heart-Shaped Box", "Nirvana - Lithium", "Nirvana - Rape Me", "Nirvana - Smells Like Teen Spirit", "overtonight - elephant cage", "overtonight - ghost party", "overtonight - mirrors demo", "overtonight - poem", "overtonight - they'll post it online", "Penelope Scott - Rat", "Radiohead - Creep", "Radiohead - Exit Music (for a film)", "Radiohead - Let Down", "Radiohead - No Surprises", "s0rrow - fake ur face", "s0rrow - stalk ur socials", "s0rrow - unhappy", "The Killers - Mr. Brightside", "The Long Faces - Jane!", "TV Girl - it almost worked", "TV Girl - Lovers Rock", "TV Girl - Not Allowed"]
 songnumber = 0
-volume = 60
+volume = 40
 
 player = vlc.MediaPlayer()
 player.audio_set_volume(volume)
@@ -38,10 +38,10 @@ while True:
     left_pressed = False
     right_pressed = False
     while running:
+        if player.get_state() == vlc.State.Ended:
+            running = False
         readable, _, _ = select.select([mouse.fd], [], [], 0.2)
         if readable:
-            if player.get_state() == "State.Ended":
-                running = False
             for event in mouse.read():
                 if event.type == ecodes.EV_REL:
                     if event.code == ecodes.REL_WHEEL:
