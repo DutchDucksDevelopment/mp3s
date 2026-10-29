@@ -1,33 +1,56 @@
 import sys
+import subprocess
 import select
 import random
 import vlc
 import time
+import os
 from evdev import InputDevice, ecodes
+
+# def bluecheck():
+#    result = subprocess.run(
+#        ["bluetoothctl", "devices", "Connected"],
+#        capture_output=True,
+#        text=True,
+#        timeout=5,
+#    )
+#    return bool(result.stdout.strip())
 
 MOUSE_DEVICE = (
     "/dev/input/by-id/"
     "usb-YICHIP_Trust_Wireless_Silent_Mouse-if01-event-mouse"
 )
 mouse = InputDevice(MOUSE_DEVICE)
-songnumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
+playlist = os.listdir("/home/Freek/mp3s/Mp3s/")
+songnumbers = list(range(0,len(playlist)))
 random.shuffle(songnumbers)
-playlist = ["Arctic Monkeys - 505", "LINKIN PARK - Crawling", "LINKIN PARK - Somewhere I Belong", "LINKIN PARK - Faint", "LINKIN PARK - Given Up", "LINKIN PARK - In The End", "LINKIN PARK - Numb", "LINKIN PARK - One Step Closer", "LINKIN PARK - The Emptiness Machine", "LINKIN PARK - What I've Done", "Nirvana - All Apologies", "Nirvana - Come As You Are", "Nirvana - Heart-Shaped Box", "Nirvana - Lithium", "Nirvana - Rape Me", "Nirvana - Smells Like Teen Spirit", "overtonight - elephant cage", "overtonight - ghost party", "overtonight - mirrors demo", "overtonight - poem", "overtonight - they'll post it online", "Penelope Scott - Rat", "Radiohead - Creep", "Radiohead - Exit Music (for a film)", "Radiohead - Let Down", "Radiohead - No Surprises", "s0rrow - fake ur face", "s0rrow - stalk ur socials", "s0rrow - unhappy", "The Killers - Mr. Brightside", "The Long Faces - Jane!", "TV Girl - it almost worked", "TV Girl - Lovers Rock", "TV Girl - Not Allowed"]
 songnumber = 0
-volume = 40
+
+
+volume = 100
 
 player = vlc.MediaPlayer()
 player.audio_set_volume(volume)
 
+def shutdown():
+    print("shutdown")
+    player.stop()
+    mouse.close()
+    try:
+        subprocess.run(["sudo", "shutdown", "-P", "now"], check=True)
+    except:
+        sys.exit()
 
 while True:
+    print("new song")
     time.sleep(0.1)
-    if songnumber > 0 or songnumber == 0:
+    if songnumber > -1 or songnumber < 33:
         songnumber = songnumber + 1
     else:
         songnumber = 0
-    player = vlc.MediaPlayer("/home/Freek/mp3s/Mp3s/" + playlist[songnumbers[songnumber]] + ".ogg")
+    player = vlc.MediaPlayer("/home/Freek/mp3s/Mp3s/" + playlist[songnumbers[songnumber]])
     player.play()
+    time.sleep(0.2)
     print(songnumber)
     print("Playing " + playlist[songnumbers[songnumber]])
     print("Press Middle Mouse Button to pause/resume, Left/Right Mouse Button to go forward/back song, or Q to quit.")
@@ -46,7 +69,7 @@ while True:
                 if event.type == ecodes.EV_REL:
                     if event.code == ecodes.REL_WHEEL:
                         if event.value > 0:
-                            volume = min(100, volume + 5)
+                            volume = min(150, volume + 5)
                         elif event.value < 0:
                             volume = max(0, volume - 5)
                         player.audio_set_volume(volume)
@@ -57,11 +80,9 @@ while True:
                 if event.code == ecodes.BTN_LEFT:
                     if pressed:
                         left_pressed = True
+                        time.sleep(0.05)
                         if right_pressed:
-                            print("exiting")
-                            player.stop()
-                            mouse.close()
-                            sys.exit()
+                            shutdown()
                         songnumber = songnumber - 2
                         player.stop()
                         running = False
@@ -69,12 +90,10 @@ while True:
                         left_pressed = False
                 elif event.code == ecodes.BTN_RIGHT:
                     if pressed:
+                        print("next pressed")
                         right_pressed = True
                         if left_pressed:
-                            print("exiting")
-                            player.stop
-                            pygame.quit()
-                            sys.exit()
+                            shutdown()
                         player.stop()
                         running = False
                     elif released:
