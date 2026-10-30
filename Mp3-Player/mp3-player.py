@@ -83,9 +83,15 @@ while True:
         songnumber = songnumber + 1
     else:
         songnumber = 0
-    player = vlc.MediaPlayer("/home/Freek/mp3s/Mp3s/" + playlist[songnumbers[songnumber]])
+    media = vlc.Media("/home/Freek/mp3s/Mp3s/" + playlist[songnumbers[songnumber]])
+    player = vlc.MediaPlayer()
+    media.parse()
+    player.set_media(media)
     player.play()
-    time.sleep(0.2)
+    player.audio_set_volume(0)
+    time.sleep(2)
+    player.audio_set_volume(volume)
+    player.set_time(0)
     print(songnumber)
     print("Playing " + playlist[songnumbers[songnumber]])
     print("Press Middle Mouse Button to pause/resume, Left/Right Mouse Button to go forward/back song, or Q to quit.")
