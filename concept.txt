@@ -1,0 +1,27 @@
+import subprocess
+import time
+
+def run(*args):
+    return subprocess.run(
+        args, capture_output=True, text=True, check=True
+    ).stdout
+
+# Wait up to 30 seconds for the connected Bluetooth headset's output.
+for _ in range(30):
+    sinks = run("pactl", "list", "short", "sinks").splitlines()
+    bluetooth_sinks = [
+        line.split()[1]
+        for line in sinks
+        if len(line.split()) > 1
+        and line.split()[1].startswith("bluez_output.")
+    ]
+
+    if bluetooth_sinks:
+        sink = bluetooth_sinks[0]
+        run("pactl", "set-default-sink", sink)
+        print(f"Default audio output set to: {sink}")
+        break
+
+    time.sleep(1)
+else:
+    print("No Bluetooth audio output found. Connect the headset and try again.")
