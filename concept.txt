@@ -1,3 +1,5 @@
+pactl list short sinks
+
 import subprocess
 import time
 
